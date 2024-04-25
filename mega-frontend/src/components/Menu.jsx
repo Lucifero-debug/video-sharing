@@ -19,6 +19,9 @@ import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import SettingsBrightnessOutlinedIcon from '@mui/icons-material/SettingsBrightnessOutlined';
 import {Link} from "react-router-dom"
+import { useSelector,useDispatch } from "react-redux";
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import {logout} from '../redux/userSlice';
 const Container = styled.div`
 flex:1;
 background-color:${({theme}) => theme.bg};
@@ -76,8 +79,13 @@ font-weight: 500;
 color: #aaaaaa;
 margin-bottom: 20px;
 `
-
 function Menu( {darkMode,toggleDarkMode} ) {
+    const { currentUser } = useSelector(state => state.user);
+    const dispatch=useDispatch()
+    const logoutUser=()=>{
+        dispatch(logout())
+        // console.log('current user',currentUser)
+    }
   return (
     <Container>
       <Wrapper>
@@ -106,47 +114,63 @@ function Menu( {darkMode,toggleDarkMode} ) {
         </Item>
         </Link>
         <Hr/>
+        <Link to="/playlist" style={{textDecoration:"none",color:"inherit"}}>
         <Item>
          <VideoLibraryOutlinedIcon/>
-            Library
+            Playlist
         </Item>
+        </Link>  
+        <Link to="/history" style={{textDecoration:"none",color:"inherit"}}>
         <Item>
         <HistoryOutlinedIcon/>
             History
         </Item>
+        </Link>
         <Hr/>
-        <Link to="/signin" style={{textDecoration:"none",color:"inherit"}}>
+       {!currentUser&& <>
         <Login>
+        <Link to="/signin" style={{textDecoration:"none",color:"inherit"}}>
             Sign in to like Videos,comment and subscribe.
             <Button>
                <AccountCircleOutlinedIcon/> SIGN IN
             </Button>
-        </Login>
         </Link>
+        </Login>
         <Hr/>
+        </> }
         <Title>
             BEST OF VIDEOTUBE
         </Title>
+        <Link to="/music" style={{textDecoration:"none",color:"inherit"}}>
         <Item>
         <LibraryMusicOutlinedIcon/>
             Music
         </Item>
+        </Link>
+        <Link to="/sports" style={{textDecoration:"none",color:"inherit"}}>
         <Item>
          <SportsBaseballOutlinedIcon/>
             Sports
         </Item>
+        </Link>
+        <Link to="/gaming" style={{textDecoration:"none",color:"inherit"}}>
         <Item>
         <SportsEsportsOutlinedIcon/>
             Gaming
         </Item>
+        </Link>
+        <Link to="/movies" style={{textDecoration:"none",color:"inherit"}}>
         <Item>
         <MovieOutlinedIcon/>
             Movies
         </Item>
+        </Link>
+        <Link to="/news" style={{textDecoration:"none",color:"inherit"}}>
         <Item>
         <ArticleOutlinedIcon/>
             News
         </Item>
+        </Link>
         <Item>
          <LiveTvOutlinedIcon/>
             Live
@@ -168,6 +192,10 @@ function Menu( {darkMode,toggleDarkMode} ) {
         <SettingsBrightnessOutlinedIcon/>
             {darkMode ? "Light" : "Dark"} Mode
         </Item>
+       {currentUser&& <Item onClick={logoutUser}>
+       <LogoutOutlinedIcon/>
+       LOG OUT
+        </Item>}
       </Wrapper>
     </Container>
   )

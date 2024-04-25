@@ -19,7 +19,6 @@ const Home=({types})=> {
   useEffect(()=>{
     const fetchVideos=async ()=>{
       try {
-        const login=await axios.post("api/v1/users/login",{username:"pinkaj",password:"12345678"})
         console.log("type is:",types)
     const res=await axios.get(`/api/v1/video/${types}`)
    setVideos(res.data.data)
@@ -34,7 +33,7 @@ fetchVideos()
 
   return (
     <Container>
-  {videos.map((video)=>(
+  {videos?.map((video)=>(
     <Card key={video._id}  video={video}/>
   ))
 

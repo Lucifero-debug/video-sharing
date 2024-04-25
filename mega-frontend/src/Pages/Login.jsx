@@ -1,6 +1,11 @@
 import React, {useState} from 'react'
 import styled from "styled-components"
 import axios from "axios"
+import { useDispatch } from 'react-redux';
+import { loginFailure, loginStart, loginSuccess } from '../redux/userSlice';
+import {auth,provider} from "../firebase"
+import {signInWithPopup } from "firebase/auth"
+import {useNavigate} from "react-router-dom"
 
 const Container=styled.div `
 display: flex;
@@ -66,12 +71,14 @@ const [user,setUser]=useState("")
 const [password,setPassword]=useState("")
 const [email,setEmail]=useState("")
 const [name,setName]=useState("")
+const dispatch=useDispatch()
+const navigate=useNavigate()
 
   const register=async(e)=>{
     e.preventDefault()
 try {
   const regUser=await axios.post("/api/v1/users/register",{username:user,password:password,email:email,fullName:name})
-  console.log("registerd user is:",regUser)
+  // console.log("registerd user is:",regUser)
 } catch (error) {
   console.log("error registering user",error)
 }
@@ -81,10 +88,30 @@ try {
     e.preventDefault()
     try {
       const signUser=await axios.post("/api/v1/users/login",{username:user,password:password})
-      console.log("logged in user:",signUser)
+      console.log("logged in user:",signUser.data.data.user)
+      dispatch(loginSuccess(signUser.data.data.user)) && navigate('/random')
     } catch (error) {
       console.log("error signing in user",error)
+      dispatch(loginFailure())
     }
+   }
+
+   const signInWithGoogle =async()=>{
+    dispatch(loginStart())
+    signInWithPopup(auth,provider)
+    .then((result)=>{
+      axios.post("/api/v1/users/google",{
+        name:result.user.displayName,
+        email:result.user.email,
+        img:result.user.photoUrl
+      }).then((res)=>{
+        dispatch(loginSuccess(res.data))
+      })
+    })
+    .catch((error)=>{
+      console.log(error)
+      dispatch(loginFailure())
+    })
    }
 
   return (
@@ -95,6 +122,8 @@ try {
      <Input placeholder='username'onChange={(e)=>setUser(e.target.value)}/>
      <Input type='password' placeholder='password' onChange={(e)=>setPassword(e.target.value)}/>
      <Button onClick={sign}>Sign IN</Button>
+     <Title>OR</Title>
+     <Button onClick={signInWithGoogle}>Sign In With Google</Button>
      <Title>OR</Title>
      <Input placeholder='username'onChange={(e)=>setUser(e.target.value)}/>
      <Input placeholder='email' onChange={(e)=>setEmail(e.target.value)}/>

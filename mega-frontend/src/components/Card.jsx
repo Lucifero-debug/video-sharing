@@ -6,6 +6,7 @@ import axios from "axios"
 import {format} from "timeago.js"
 
 
+
 const Container=styled.div `
 width: ${(props)=>props.type!== "sm" && "360px"};
 margin-bottom: ${(props)=>props.type==="sm"&&"flex"};
@@ -54,28 +55,38 @@ const Card = ({ type, video }) => {
   const [user,setUser]=useState([])
   /* console.log("video is:",video.owner) */
   
+  
   useEffect(()=>{
     const fetchUser=async()=>{
       try{
-  const channel=await axios.get(`/api/v1/users/find/${video.owner}`)
-  setUser(channel.data.data)
+  const channel=await axios.get(`/api/v1/users/find/${video?.owner}`)
+  setUser(channel?.data.data)
       }catch(error){
     console.log("error is",error)  }
     }
     fetchUser()
-  },[video.owner])
+  },[video?.owner])
   /* console.log("user video is:",user) */
+const handleViews=async()=>{
+  try{
+const addView=await axios.post(`/api/v1/video/${video?._id}/addview`)
+console.log("views on:",addView)
+console.log("views array are:",video?.views)
+  }catch(error){
+console.log("Error adding views",error)
+  }
+}
 
   return (
-    <Link to="/video/test" style={{textDecoration:"none"}}>
-    <Container type={type} >
-      <Image type={type} src={video.thumbnail} />
+    <Link to={`/video/${video?._id}`} style={{textDecoration:"none"}}>
+    <Container type={type} onClick={handleViews}>
+      <Image type={type} src={video?.thumbnail} />
       <Details>
-      <ChannelImage type={type} src={user.avatar}/>
+      <ChannelImage type={type} src={user?.avatar}/>
       <Texts>
-        <Title>{video.title}</Title>
-        <ChannelName>{user.username}</ChannelName>
-        <Info>{video.views} views &nbsp; &#8226; {format(video.createdAt)}</Info>
+        <Title>{video?.title}</Title>
+        <ChannelName>{user?.username}</ChannelName>
+        <Info>{video?.views.length} views &nbsp; &#8226; {format(video?.createdAt)}</Info>
       </Texts>
       </Details>
     </Container>
@@ -86,7 +97,7 @@ const Card = ({ type, video }) => {
 
 Card.propTypes ={
 type:PropTypes.string,
-video:PropTypes.array
+video:PropTypes.object
 }
 
 export default Card

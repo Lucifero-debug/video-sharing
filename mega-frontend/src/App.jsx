@@ -8,6 +8,11 @@ import { BrowserRouter,Routes,Route, Outlet } from "react-router-dom"
 import Home from "./Pages/Home.jsx"
 import Video from "./Pages/Video.jsx";
 import Login from "./Pages/Login.jsx"
+import Search from "./Pages/Search.jsx";
+import Genre from "./Pages/Genre.jsx";
+import History from "./Pages/History.jsx";
+import ListPlaylist from "./Pages/ListPlaylist.jsx";
+import VideoContainer from "./Pages/videoContainer.jsx";
 const Container=styled.div`
 display:flex;
 `
@@ -36,8 +41,11 @@ useEffect(() => {
   localStorage.setItem("darkMode", JSON.stringify(darkMode));
 });
  const [types,setTypes]=useState("")
+ const [tags,setTags]=useState("")
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+
+
     <Container>
     <BrowserRouter>
     <Menu darkMode={darkMode} toggleDarkMode={toggleDarkMode}/>
@@ -50,7 +58,16 @@ useEffect(() => {
       <Route path="random" element={<Home types="random"/>}/>
       <Route path="trend" element={<Home types="trend"/>} />
       <Route path="subscriptions" element={<Home types="sub"/>}/>
+      <Route path="search/:query" element={<Search/>}/>
       <Route path="signin" element={<Login/>}/>
+      <Route path="/music" element={<Genre tags="music"/>} />
+      <Route path="/gaming" element={<Genre tags="gaming"/>} />
+      <Route path="/movies" element={<Genre tags="movies"/>} />
+      <Route path="/news" element={<Genre tags="news"/>} />
+      <Route path="/sports" element={<Genre tags="sports"/>} />
+      <Route path="/history" element={<History/>} />
+      <Route path="/playlist" element={<ListPlaylist/>} />
+      <Route path="/playlist/video" element={<VideoContainer/>} />
       <Route path="video">
       <Route path=":id" element={<Video/>}/>
       </Route>  
